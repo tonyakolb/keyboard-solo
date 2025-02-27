@@ -58,7 +58,6 @@ function insertWord() {
 }
 
 function checkWord(event) {
-
     if (!isTraining) {
         timerId = setInterval(updateTimer, 1000);
         isTraining = true;
@@ -71,36 +70,23 @@ function checkWord(event) {
         allSpan[index].classList.remove('w');
         allSpan[index].classList.add('c');
         index++;
-
-        if (index === randomWord.length) {
-            countCorrectWords++;
-            correctWords.textContent = countCorrectWords;
-            setTimeout(() => {
-                insertWord();
-                if (countCorrectWords === 5) {
-                    clearInterval(timerId);
-                    alert(`Победа! Ваш результат ${timerDiv.textContent}`);
-                    resetInfo();
-                }
-            }, 1000);
-        }
-
     }
     else {
         allSpan[index].classList.add('w');
         countWordMistakes++;
-
+        wordMistakes.textContent = countWordMistakes;
         if (countWordMistakes === 1) {
             countWrongWords++;
             wrongWords.textContent = countWrongWords;
         }
+    }
 
-        wordMistakes.textContent = countWordMistakes;
-        if (countWrongWords === 5) {
-            clearInterval(timerId);
-            alert(`Проигрыш! Ваш результат ${timerDiv.textContent}`);
-            resetInfo();
+    if (index === randomWord.length) {
+        if (countWordMistakes === 0) {
+            countCorrectWords++;
+            correctWords.textContent = countCorrectWords;
         }
+        checkEndGame();
     }
 }
 
@@ -125,10 +111,29 @@ function updateTimer() {
 function resetInfo() {
     countCorrectWords = 0;
     countWrongWords = 0;
+    minutes = '00';
+    seconds = '00';
     correctWords.textContent = countCorrectWords;
     wrongWords.textContent = countWrongWords;
+    timerDiv.textContent = `00:00`;
     insertWord();
     isTraining = false;
+}
+
+function checkEndGame() {
+    setTimeout(() => {
+        insertWord();
+        if (countCorrectWords === 5) {
+            alert(`Победа! Ваш результат ${timerDiv.textContent}`);
+            clearInterval(timerId);
+            resetInfo();
+        }
+        if (countWrongWords === 5) {
+            alert(`Проигрыш! Ваш результат ${timerDiv.textContent}`);
+            clearInterval(timerId);
+            resetInfo();
+        }
+    }, 0);
 }
 
 insertWord();
